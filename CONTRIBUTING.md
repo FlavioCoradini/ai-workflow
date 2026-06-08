@@ -40,6 +40,19 @@ Keep instructions terse and imperative. Put long material in `references/` and l
 than bloating `SKILL.md`. If a skill is derived from someone else's work, preserve their license and
 attribution in the body (see `skills/grill-me/SKILL.md`).
 
+### Importing from another skill repo
+
+To vendor a skill from the [`npx skills`](https://github.com/vercel-labs/skills) ecosystem, use the
+wrapper instead of copying by hand — it fetches via the standard CLI but lands the skill in `skills/`
+(the plain CLI would install it into your agent dirs, bypassing this repo):
+
+```sh
+./scripts/add-skill.sh owner/repo --skill some-skill   # add --install to also link it in
+```
+
+This repo is also a valid `npx skills` *source* itself, thanks to the `skills/<name>/SKILL.md`
+layout — keep that layout so `npx skills add <user>/<repo>` keeps working for everyone.
+
 ## Dev loop
 
 ```sh

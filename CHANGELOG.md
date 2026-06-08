@@ -18,3 +18,7 @@ All notable changes to this project are documented here. The format is based on
 - Imported 20 more skills as a starting set: the 18-skill design/frontend suite from
   `pbakaus/impeccable`, plus `find-skills` (vercel-labs/skills) and `next-best-practices`
   (vercel-labs/next-skills). Sources credited in the README.
+- `scripts/add-skill.sh` — vendor a skill from the `npx skills` ecosystem directly into `skills/`
+  (the bare CLI installs into agent dirs, bypassing the repo). Supports `--list`, `--skill`,
+  `--force`, and `--install`. The repo's `skills/<name>/SKILL.md` layout also makes it a valid
+  `npx skills add <user>/<repo>` source out of the box.

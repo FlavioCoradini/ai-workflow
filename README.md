@@ -86,30 +86,57 @@ No dependencies — POSIX shell and `ln`, already on every Mac and Linux box.
 
 ## Adding a skill
 
-1. Create `skills/<name>/SKILL.md` with open-standard frontmatter (the folder name **must** equal
-   the `name`):
+**From an existing skill repo (`npx skills`).** Pull any skill from the
+[`npx skills`](https://github.com/vercel-labs/skills) ecosystem straight into this repo with the
+wrapper. It runs the standard CLI under the hood, then lands the skill in `skills/`, validates it,
+and (with `--install`) wires it into your harnesses:
 
-   ```markdown
-   ---
-   name: my-skill
-   description: What it does, and when an agent should reach for it.
-   ---
+```sh
+./scripts/add-skill.sh owner/repo --list                  # see what a source offers
+./scripts/add-skill.sh owner/repo --skill some-skill       # import one skill into skills/
+./scripts/add-skill.sh owner/repo --skill some-skill --install   # …and link it everywhere
+```
 
-   # My Skill
+(`npx skills add owner/repo` on its own installs into your agent dirs, bypassing the repo — the
+wrapper exists so the skill lands in your source of truth instead. Requires Node.js.)
 
-   Instructions for the agent…
-   ```
+**By hand.** Create `skills/<name>/SKILL.md` with open-standard frontmatter (the folder name
+**must** equal the `name`):
 
-   Add `references/` and `scripts/` subfolders if the skill needs them.
+```markdown
+---
+name: my-skill
+description: What it does, and when an agent should reach for it.
+---
 
-2. Validate and wire it up:
+# My Skill
 
-   ```sh
-   ./test/run.sh        # checks frontmatter, naming, and length rules
-   ./install.sh         # symlinks the new skill into every installed harness
-   ```
+Instructions for the agent…
+```
+
+Add `references/` and `scripts/` subfolders if the skill needs them, then validate and wire it up:
+
+```sh
+./test/run.sh        # checks frontmatter, naming, and length rules
+./install.sh         # symlinks the new skill into every installed harness
+```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full authoring guide.
+
+## Installing skills *from* this repo
+
+Because the skills use the standard `skills/<name>/SKILL.md` layout, this repo is itself a valid
+[`npx skills`](https://github.com/vercel-labs/skills) source — no extra metadata needed. On any
+machine, or for anyone who clones nothing at all:
+
+```sh
+npx skills add flaviocoradini/ai-workflow                  # interactive picker
+npx skills add flaviocoradini/ai-workflow --list           # list everything here
+npx skills add flaviocoradini/ai-workflow --skill grill-me # one skill
+```
+
+That installs into the agent dirs the CLI manages. Prefer `git clone … && ./install.sh` if you want
+the symlink-backed setup where edits to the repo stay live across every harness.
 
 ## Supported harnesses
 

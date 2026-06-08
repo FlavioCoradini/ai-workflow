@@ -31,19 +31,43 @@ SOURCE="" FORCE=0 INSTALL=0 LIST=0
 PASS="" # args forwarded to the CLI (e.g. --skill NAME)
 while [ $# -gt 0 ]; do
   case "$1" in
-    --force)    FORCE=1 ;;
-    --install)  INSTALL=1 ;;
-    --list|-l)  LIST=1; PASS="$PASS --list" ;;
-    --skill|-s) shift; [ $# -gt 0 ] || { echo "--skill needs a NAME" >&2; exit 2; }
-                PASS="$PASS --skill $1" ;;
-    --help|-h)  sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-    -*)         echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
-    *)          if [ -z "$SOURCE" ]; then SOURCE="$1"; else echo "unexpected arg: $1" >&2; exit 2; fi ;;
+  --force) FORCE=1 ;;
+  --install) INSTALL=1 ;;
+  --list | -l)
+    LIST=1
+    PASS="$PASS --list"
+    ;;
+  --skill | -s)
+    shift
+    [ $# -gt 0 ] || {
+      echo "--skill needs a NAME" >&2
+      exit 2
+    }
+    PASS="$PASS --skill $1"
+    ;;
+  --help | -h)
+    sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
+    exit 0
+    ;;
+  -*)
+    echo "unknown option: $1 (try --help)" >&2
+    exit 2
+    ;;
+  *) if [ -z "$SOURCE" ]; then SOURCE="$1"; else
+    echo "unexpected arg: $1" >&2
+    exit 2
+  fi ;;
   esac
   shift
 done
-[ -n "$SOURCE" ] || { echo "need a <source> (try --help)" >&2; exit 2; }
-command -v npx >/dev/null 2>&1 || { echo "npx not found — install Node.js first" >&2; exit 1; }
+[ -n "$SOURCE" ] || {
+  echo "need a <source> (try --help)" >&2
+  exit 2
+}
+command -v npx >/dev/null 2>&1 || {
+  echo "npx not found — install Node.js first" >&2
+  exit 1
+}
 
 # --list: just forward to the CLI and stop. Nothing is imported.
 if [ "$LIST" -eq 1 ]; then
@@ -59,7 +83,7 @@ echo "Fetching '$SOURCE' via npx skills…"
 # We target one agent (claude-code) just to get the files on disk; destination dir is
 # discovered below by locating SKILL.md, so the exact agent layout doesn't matter.
 # shellcheck disable=SC2086
-( cd "$TMP" && npx -y skills add "$SOURCE" --copy -y -a claude-code $PASS >/dev/null 2>&1 ) || {
+(cd "$TMP" && npx -y skills add "$SOURCE" --copy -y -a claude-code $PASS >/dev/null 2>&1) || {
   echo "npx skills add failed. Re-run with --list to see what '$SOURCE' offers." >&2
   exit 1
 }
@@ -67,7 +91,7 @@ echo "Fetching '$SOURCE' via npx skills…"
 # Each imported skill is the directory that directly contains a SKILL.md.
 LIST_FILE="$(mktemp)"
 trap 'rm -rf "$TMP" "$LIST_FILE"' EXIT INT TERM
-find "$TMP" -name SKILL.md -type f > "$LIST_FILE" 2>/dev/null || true
+find "$TMP" -name SKILL.md -type f >"$LIST_FILE" 2>/dev/null || true
 
 found=0 imported=0 skipped=0
 while IFS= read -r skillmd; do
@@ -81,19 +105,23 @@ while IFS= read -r skillmd; do
       rm -rf "$dest"
     else
       echo "  skip  $name (already in skills/ — use --force to overwrite)"
-      skipped=$((skipped + 1)); continue
+      skipped=$((skipped + 1))
+      continue
     fi
   fi
   cp -R "$src" "$dest"
   echo "  added skills/$name"
   imported=$((imported + 1))
-done < "$LIST_FILE"
+done <"$LIST_FILE"
 
 if [ "$found" -eq 0 ]; then
   echo "No SKILL.md found for '$SOURCE'. Re-run with --list to inspect it." >&2
   exit 1
 fi
-[ "$imported" -gt 0 ] || { echo "Nothing imported ($skipped skipped)."; exit 0; }
+[ "$imported" -gt 0 ] || {
+  echo "Nothing imported ($skipped skipped)."
+  exit 0
+}
 
 echo
 echo "Validating…"

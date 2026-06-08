@@ -2,9 +2,10 @@
 
 My AI [Agent Skills](https://agentskills.io) in one place, symlinked into every harness with one command.
 
-Skills live here once. `install.sh` links each into Claude Code, Codex, opencode, Gemini, Cursor, Pi,
-and Qwen — edit a skill here and it's live everywhere. The `SKILL.md` open standard fixes the file
-format; `install.sh` handles the per-harness paths.
+Skills live here once. Most tools — Codex, opencode, Gemini CLI, and the wider agent-compatible
+ecosystem — read the shared store `~/.agents/skills/`, so `install.sh` symlinks each skill there.
+Claude Code reads only its own dir, so it gets an extra symlink. Edit a skill here and it's live
+everywhere.
 
 ## Install
 
@@ -73,17 +74,15 @@ This repo is itself a valid `npx skills` source: `npx skills add FlavioCoradini/
 
 ## Harnesses
 
-Paths live in one editable table at the top of `install.sh` / `uninstall.sh`.
+`install.sh` links into **one shared store** plus a short list of tools that read only their own dir.
 
-| Harness | Skills directory |
-|---------|------------------|
-| Claude Code | `~/.claude/skills` |
-| Codex | `~/.agents/skills` |
-| opencode | `~/.config/opencode/skill` |
-| Gemini | `~/.gemini/skills` |
-| Cursor | `~/.cursor/skills` |
-| Pi | `~/.pi/skills` |
-| Qwen | `~/.qwen/skills` |
+| | Directory | Covers |
+|---|---|---|
+| **Shared store** (always) | `~/.agents/skills` | Codex, opencode, Gemini CLI, and other [agent-compatible](https://geminicli.com/docs/cli/skills/) tools that read it directly |
+| **Own-dir exceptions** | `~/.claude/skills`, `~/.cursor/skills` | Claude Code (reads only its own dir), Cursor |
+
+If you use a tool that reads only its own directory and isn't listed, add a line to the `EXCEPTIONS`
+table at the top of `install.sh` / the `SWEEP_DIRS` list in `uninstall.sh`.
 
 ## License & credits
 

@@ -8,9 +8,10 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 - Initial repository: a source-of-truth collection of Agent Skills with a zero-dependency installer.
-- `install.sh` — symlinks every skill under `skills/` into each installed AI harness (Claude Code,
-  Codex, opencode, Gemini, Cursor, Pi, Qwen) via one editable path table. Idempotent; skips
-  harnesses that aren't installed; supports `--all`, `--force`, `--dry-run`, and `--target`.
+- `install.sh` — symlinks every skill under `skills/` into the shared store `~/.agents/skills/`
+  (read by Codex, opencode, Gemini CLI, and the wider agent-compatible ecosystem) plus a short list
+  of own-dir exceptions (Claude Code, Cursor). Idempotent; skips exceptions that aren't installed;
+  supports `--all`, `--force`, `--dry-run`, and `--target`.
 - `uninstall.sh` — removes only the symlinks that resolve back into this repo.
 - `test/run.sh` — validates every `SKILL.md` against the Agent Skills open standard (frontmatter,
   `name` == folder, naming rules, length limits). Wired into CI.
@@ -27,3 +28,8 @@ All notable changes to this project are documented here. The format is based on
 - `install.sh` no longer hijacks a skill name it doesn't own. A name held by a real folder *or* by
   a foreign symlink (e.g. one created by `npx skills`) is skipped unless `--force`; only symlinks
   already pointing into this repo are repointed. Covered by `test/test_install.sh`.
+- Simplified the linking model from seven per-harness directories to one shared store
+  (`~/.agents/skills/`) plus own-dir exceptions. Codex, opencode, and Gemini CLI all read the shared
+  store, so their dedicated symlinks were redundant — and the old opencode path (`…/opencode/skill`,
+  singular) was wrong (opencode reads `…/skills`). `uninstall.sh` still sweeps the legacy paths so it
+  cleans up older installs.

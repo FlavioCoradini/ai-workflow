@@ -9,14 +9,19 @@
 
 set -eu
 
-HARNESSES="
-claude   | $HOME/.claude/skills
-codex    | $HOME/.agents/skills
-opencode | $HOME/.config/opencode/skill
-gemini   | $HOME/.gemini/skills
-cursor   | $HOME/.cursor/skills
-pi       | $HOME/.pi/skills
-qwen     | $HOME/.qwen/skills
+# Directories to sweep. Covers the current model (shared store + own-dir
+# exceptions) plus legacy paths older versions linked into, so uninstall fully
+# cleans up regardless of which version installed. Only symlinks that resolve
+# back into this repo are removed — anything else is left alone.
+SWEEP_DIRS="
+$HOME/.agents/skills
+$HOME/.claude/skills
+$HOME/.cursor/skills
+$HOME/.config/opencode/skill
+$HOME/.config/opencode/skills
+$HOME/.gemini/skills
+$HOME/.pi/skills
+$HOME/.qwen/skills
 "
 
 DRY=0 EXTRA_TARGETS=""
@@ -57,10 +62,6 @@ sweep() { # <skills dir>
 }
 
 [ "$DRY" -eq 1 ] && echo "(dry run — nothing will change)"
-echo "$HARNESSES" | while IFS='|' read -r name raw_dir; do
-  [ -n "$(echo "$name" | tr -d '[:space:]')" ] || continue
-  dir="$(echo "$raw_dir" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-  printf '%s\n' "$dir"; sweep "$dir"
-done
+for dir in $SWEEP_DIRS; do printf '%s\n' "$dir"; sweep "$dir"; done
 for dir in $EXTRA_TARGETS; do printf '%s\n' "$dir"; sweep "$dir"; done
 echo "Done."

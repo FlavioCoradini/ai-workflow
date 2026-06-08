@@ -1,35 +1,34 @@
 #!/bin/sh
-# install.sh — wire this repo's skills into every AI harness on this machine.
+# install.sh — wire this repo's skills into the AI harnesses on this machine.
 #
-# Each skill under skills/ is symlinked into the skills directory of every harness
-# that is installed, so editing a skill in the repo is instantly live everywhere.
-# Harnesses that aren't installed are skipped and reported. Idempotent: safe to
-# re-run after pulling new skills or installing a new harness.
+# Most harnesses read a shared store, ~/.agents/skills/ — Codex (its native dir),
+# opencode, Gemini CLI, and the broader "agent-compatible" ecosystem all read it.
+# So skills are symlinked there once. A few tools read ONLY their own directory
+# (Claude Code, Cursor); those get an extra symlink. Editing a skill in the repo
+# is then live everywhere. Idempotent: safe to re-run.
 #
 # Usage:
 #   ./install.sh [--all] [--force] [--dry-run] [--target DIR] [--help]
 #
-#   --all         also create skills dirs for harnesses that aren't installed yet
-#   --force       replace a real (non-symlink) skill dir of the same name
+#   --all         also link into exception harnesses that aren't installed yet
+#   --force       replace a real dir / foreign symlink of the same name
 #   --dry-run     print what would happen, change nothing
 #   --target DIR  also link into an extra skills directory (repeatable)
 #   --help        show this help
 
 set -eu
 
-# --- harness skills directories ---------------------------------------------
-# One per line: "<name> | <skills dir>". A harness is considered installed when
-# the *parent* of its skills dir exists. Adjust a line here if a tool moves its
-# path. claude and codex (~/.agents) are verified; the rest follow each tool's
-# documented Agent Skills convention.
-HARNESSES="
-claude   | $HOME/.claude/skills
-codex    | $HOME/.agents/skills
-opencode | $HOME/.config/opencode/skill
-gemini   | $HOME/.gemini/skills
-cursor   | $HOME/.cursor/skills
-pi       | $HOME/.pi/skills
-qwen     | $HOME/.qwen/skills
+# --- where skills go --------------------------------------------------------
+# CANONICAL is the shared store almost every tool reads; we always link here.
+CANONICAL="$HOME/.agents/skills"
+
+# EXCEPTIONS: harnesses that read ONLY their own dir, not the shared store.
+# One per line: "<name> | <skills dir>". Linked only if the harness is installed
+# (its parent dir exists) or --all is given. Add a line if you use another tool
+# that doesn't read ~/.agents/skills.
+EXCEPTIONS="
+claude-code | $HOME/.claude/skills
+cursor      | $HOME/.cursor/skills
 "
 
 # --- args --------------------------------------------------------------------
@@ -41,7 +40,7 @@ while [ $# -gt 0 ]; do
     --dry-run) DRY=1 ;;
     --target)  shift; [ $# -gt 0 ] || { echo "--target needs a DIR" >&2; exit 2; }
                EXTRA_TARGETS="$EXTRA_TARGETS custom|$1" ;;
-    --help|-h) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --help|-h) sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
   esac
   shift
@@ -102,10 +101,10 @@ link_one() { # <skill path> <target dir>
 process_target() { # <name> <skills dir> <installed:0|1>
   hname="$1"; sdir="$2"; installed="$3"
   if [ "$installed" -eq 0 ] && [ "$ALL" -eq 0 ]; then
-    printf '%-9s skip (not installed: %s)\n' "$hname" "$(dirname "$sdir")"
+    printf '%-12s skip (not installed: %s)\n' "$hname" "$(dirname "$sdir")"
     return
   fi
-  printf '%-9s %s\n' "$hname" "$sdir"
+  printf '%-12s %s\n' "$hname" "$sdir"
   run mkdir -p "$sdir"
   for s in $SKILLS; do link_one "$s" "$sdir"; done
 }
@@ -115,8 +114,11 @@ printf 'Skills:'; for s in $SKILLS; do printf ' %s' "$(basename "$s")"; done; ec
 [ "$DRY" -eq 1 ] && echo "(dry run — nothing will change)"
 echo
 
-# Built-in harnesses.
-echo "$HARNESSES" | while IFS='|' read -r raw_name raw_dir; do
+# Shared store — always linked (Codex, opencode, Gemini, … read this).
+process_target "agents" "$CANONICAL" 1
+
+# Own-dir exceptions — linked only when installed (or --all).
+echo "$EXCEPTIONS" | while IFS='|' read -r raw_name raw_dir; do
   name="$(echo "$raw_name" | tr -d '[:space:]')"
   [ -n "$name" ] || continue
   dir="$(echo "$raw_dir" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"

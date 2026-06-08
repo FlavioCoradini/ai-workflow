@@ -53,9 +53,36 @@ No dependencies — POSIX shell and `ln`, already on every Mac and Linux box.
 
 ## Skills
 
+**Workflow**
+
 | Skill | What it does |
 |-------|--------------|
 | [`grill-me`](skills/grill-me/) | Interviews you relentlessly about a plan or design — one question at a time, with a recommended answer each turn — until every branch of the decision tree is resolved. |
+| [`find-skills`](skills/find-skills/) | Discovers and installs agent skills when you ask "is there a skill for X". |
+| [`next-best-practices`](skills/next-best-practices/) | Next.js best practices — RSC boundaries, data patterns, async APIs, metadata, routing, image/font optimization, bundling. |
+
+**Design & frontend** (the [impeccable](https://github.com/pbakaus/impeccable) suite — work together as a set)
+
+| Skill | What it does |
+|-------|--------------|
+| [`teach-impeccable`](skills/teach-impeccable/) | One-time setup that records your project's design context to your AI config (the others read it). |
+| [`frontend-design`](skills/frontend-design/) | Create distinctive, production-grade frontend UI that avoids the generic AI look. |
+| [`critique`](skills/critique/) | Evaluate design from a UX perspective with actionable feedback. |
+| [`audit`](skills/audit/) | Comprehensive UI-quality audit (a11y, performance, theming, responsive) with a severity-rated report. |
+| [`adapt`](skills/adapt/) | Adapt designs across screen sizes, devices, contexts, and platforms. |
+| [`animate`](skills/animate/) | Add purposeful animations, micro-interactions, and motion. |
+| [`bolder`](skills/bolder/) | Amplify safe or boring designs to be more visually interesting. |
+| [`quieter`](skills/quieter/) | Tone down overly bold or aggressive designs. |
+| [`colorize`](skills/colorize/) | Add strategic color to monochromatic or flat interfaces. |
+| [`clarify`](skills/clarify/) | Improve unclear UX copy, error messages, labels, and microcopy. |
+| [`delight`](skills/delight/) | Add joy, personality, and unexpected touches. |
+| [`distill`](skills/distill/) | Strip designs to their essence; remove unnecessary complexity. |
+| [`extract`](skills/extract/) | Extract reusable components and design tokens into a design system. |
+| [`normalize`](skills/normalize/) | Normalize a design to match your design system. |
+| [`harden`](skills/harden/) | Error handling, i18n, text overflow, and edge cases — production resilience. |
+| [`onboard`](skills/onboard/) | Onboarding flows, empty states, and first-run experiences. |
+| [`optimize`](skills/optimize/) | UI performance: loading, rendering, animations, images, bundle size. |
+| [`polish`](skills/polish/) | Final pre-ship pass: alignment, spacing, and consistency. |
 
 ## Adding a skill
 
@@ -101,9 +128,15 @@ The skills dir for each is set in one editable table at the top of `install.sh` 
 The Claude Code and Codex (`~/.agents`) paths are verified; the others follow each tool's documented
 convention — adjust the relevant line if a tool moves its directory.
 
-## License
+## License & credits
 
-MIT — see [LICENSE](LICENSE).
+The repository tooling (installer, validator, docs) is MIT — see [LICENSE](LICENSE).
 
-`grill-me` is derived from [Matt Pocock's grill-me skill](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me)
-(MIT); attribution is preserved in [`skills/grill-me/SKILL.md`](skills/grill-me/SKILL.md).
+Several skills are vendored from upstream projects under their own licenses; credit goes to their
+authors:
+
+- The 18 design/frontend skills are from [**pbakaus/impeccable**](https://github.com/pbakaus/impeccable).
+- [`find-skills`](skills/find-skills/) is from [**vercel-labs/skills**](https://github.com/vercel-labs/skills).
+- [`next-best-practices`](skills/next-best-practices/) is from [**vercel-labs/next-skills**](https://github.com/vercel-labs/next-skills).
+- [`grill-me`](skills/grill-me/) is derived from [**Matt Pocock's grill-me**](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me)
+  (MIT); attribution is preserved in [`skills/grill-me/SKILL.md`](skills/grill-me/SKILL.md).

@@ -13,7 +13,6 @@
 
 ## Checklist
 
-- [ ] `./test/run.sh` passes
-- [ ] `shellcheck install.sh uninstall.sh test/run.sh` passes
-- [ ] New/changed skill folder name matches its `name:` frontmatter
-- [ ] Added a line to `CHANGELOG.md` under `[Unreleased]`
+- [ ] Tests + shellcheck pass (see CONTRIBUTING)
+- [ ] Skill folder name matches its `name:` frontmatter
+- [ ] `CHANGELOG.md` line added under `[Unreleased]`

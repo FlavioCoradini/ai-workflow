@@ -1,22 +1,19 @@
 # Contributing
 
-Thanks for helping out. This repo is a collection of [Agent
-Skills](https://agentskills.io) plus a tiny shell installer — no build, no runtime, no hard
-dependencies. PRs that keep it that way are the easiest to merge.
+A collection of [Agent Skills](https://agentskills.io) plus a shell installer — no build, no
+dependencies. Keep it that way.
 
 ## Anatomy of a skill
 
-A skill is a folder under `skills/` whose entry point is `SKILL.md`:
-
 ```
 skills/<name>/
-├── SKILL.md          # required — frontmatter + instructions
-├── references/       # optional — longer docs the skill can pull in
-└── scripts/          # optional — helper scripts the skill can run
+├── SKILL.md       # required — frontmatter + instructions
+├── references/    # optional — longer docs
+└── scripts/       # optional — helper scripts
 ```
 
-`SKILL.md` must start with YAML frontmatter following the [open
-standard](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills):
+`SKILL.md` starts with [open-standard](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
+frontmatter:
 
 ```markdown
 ---
@@ -29,54 +26,32 @@ description: What it does, and when an agent should use it.
 Instructions for the agent…
 ```
 
-Rules the test enforces:
+Rules the test enforces: folder name **equals** `name`; `name` is lowercase `a–z0–9` with single
+hyphens, ≤ 64 chars; `description` ≤ 1024 chars. Keep instructions terse; put long material in
+`references/`. Preserve upstream license/attribution for derived skills (see `skills/grill-me/SKILL.md`).
 
-- The folder name **equals** the `name`.
-- `name` is lowercase `a–z`, `0–9`, single hyphens, ≤ 64 chars.
-- `description` is present and ≤ 1024 chars — and says both *what* it does and *when* to use it,
-  since that's all an agent sees when deciding whether to load the skill.
-
-Keep instructions terse and imperative. Put long material in `references/` and link to it rather
-than bloating `SKILL.md`. If a skill is derived from someone else's work, preserve their license and
-attribution in the body (see `skills/grill-me/SKILL.md`).
-
-### Importing from another skill repo
-
-To vendor a skill from the [`npx skills`](https://github.com/vercel-labs/skills) ecosystem, use the
-wrapper instead of copying by hand — it fetches via the standard CLI but lands the skill in `skills/`
-(the plain CLI would install it into your agent dirs, bypassing this repo):
-
-```sh
-./scripts/add-skill.sh owner/repo --skill some-skill   # add --install to also link it in
-```
-
-This repo is also a valid `npx skills` *source* itself, thanks to the `skills/<name>/SKILL.md`
-layout — keep that layout so `npx skills add <user>/<repo>` keeps working for everyone.
+To vendor from another repo, use `./scripts/add-skill.sh owner/repo --skill name` — it lands the
+skill in `skills/` instead of your agent dirs. Keep the `skills/<name>/SKILL.md` layout so this repo
+stays a valid `npx skills` source.
 
 ## Dev loop
 
 ```sh
-git clone https://github.com/flaviocoradini/ai-workflow
-cd ai-workflow
-
-./test/run.sh            # validate every SKILL.md (CI runs exactly this)
-./install.sh --dry-run   # see where each skill would be linked
-./install.sh             # wire skills into your installed harnesses
+./test/run.sh            # validate every SKILL.md
+./test/test_install.sh   # installer collision handling
+./install.sh --dry-run   # preview links
 ```
 
-To add a harness or change where one reads skills, edit the single path table at the top of both
-`install.sh` and `uninstall.sh`.
+Harness paths live in one table at the top of `install.sh` / `uninstall.sh`.
 
-## Commits and PRs
+## PRs
 
-Keep commits small and focused, with an imperative subject like "Add code-review skill". Open the PR
-against `main` and fill in the template. CI has to be green:
+Small, focused commits with imperative subjects. CI must be green:
 
 ```sh
-shellcheck install.sh uninstall.sh test/run.sh
-./test/run.sh
+shellcheck install.sh uninstall.sh test/run.sh test/test_install.sh scripts/add-skill.sh
+./test/run.sh && ./test/test_install.sh
 ```
 
-If you added or changed a skill, add a line to `CHANGELOG.md` under `[Unreleased]`.
-
-By contributing you agree your work is licensed under the [MIT License](LICENSE).
+Add a `CHANGELOG.md` line under `[Unreleased]` for any skill or tooling change. By contributing you
+agree your work is licensed under the [MIT License](LICENSE).

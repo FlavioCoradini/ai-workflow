@@ -1,0 +1,14 @@
+# editor / OS noise
+.DS_Store
+*.swp
+
+# python bytecode from skill scripts
+__pycache__/
+*.pyc
+
+# runtime / local
+*.bak.*
+*.log
+
+# harness-local settings (not part of the project)
+.claude/

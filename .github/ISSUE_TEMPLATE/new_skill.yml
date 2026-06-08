@@ -1,0 +1,29 @@
+name: Propose a skill
+description: Suggest a new skill to add to the collection.
+labels: [skill]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Proposed name
+      description: Lowercase, hyphenated — this becomes the folder name (e.g. code-review).
+      placeholder: my-skill
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What it does, and when to use it
+      description: This is what an agent sees when deciding whether to load the skill.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: How it should work
+      description: The interview/workflow, any helper scripts or references it would need.
+  - type: input
+    id: origin
+    attributes:
+      label: Derived from (if any)
+      description: Link + license, if this adapts someone else's skill.

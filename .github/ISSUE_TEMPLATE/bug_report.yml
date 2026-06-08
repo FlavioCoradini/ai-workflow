@@ -1,0 +1,41 @@
+name: Bug report
+description: A skill, the installer, or the validator isn't behaving as expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What went wrong, and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: skill
+    attributes:
+      label: Skill (if applicable)
+      placeholder: grill-me
+  - type: dropdown
+    id: harness
+    attributes:
+      label: Harness
+      options:
+        - Claude Code
+        - Codex
+        - opencode
+        - Gemini
+        - Cursor
+        - Pi
+        - Qwen
+        - Installer / not harness-specific
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Include the exact command (e.g. `./install.sh --dry-run`) and its output.
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS / shell
+      placeholder: macOS 15 / zsh

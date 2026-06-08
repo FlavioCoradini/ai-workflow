@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck
+        run: shellcheck install.sh uninstall.sh test/run.sh
+
+      - name: shell syntax (-n)
+        run: |
+          for f in install.sh uninstall.sh test/run.sh; do
+            sh -n "$f"
+          done
+
+      - name: validate skills
+        run: ./test/run.sh
+
+      - name: install dry-run (smoke test)
+        run: ./install.sh --all --dry-run

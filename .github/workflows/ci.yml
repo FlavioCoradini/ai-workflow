@@ -26,5 +26,8 @@ jobs:
       - name: validate skills
         run: ./test/run.sh
 
+      - name: install collision handling
+        run: ./test/test_install.sh
+
       - name: install dry-run (smoke test)
         run: ./install.sh --all --dry-run

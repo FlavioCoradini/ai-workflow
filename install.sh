@@ -64,17 +64,35 @@ run() { # echo + (unless dry-run) execute
   if [ "$DRY" -eq 1 ]; then printf '   would: %s\n' "$*"; else "$@"; fi
 }
 
+# Resolve a symlink's target to an absolute path (readlink -f isn't on macOS).
+symlink_target_abs() { # <symlink>
+  link="$1"; tgt="$(readlink "$link")" || return 1
+  case "$tgt" in
+    /*) printf '%s\n' "$tgt" ;;
+    *)  printf '%s\n' "$(cd "$(dirname "$link")" && cd "$(dirname "$tgt")" 2>/dev/null && pwd)/$(basename "$tgt")" ;;
+  esac
+}
+
+# True if <dest> is a symlink that already points into this repo's skills/.
+ours() { # <dest>
+  [ -L "$1" ] || return 1
+  case "$(symlink_target_abs "$1")" in "$SKILLS_DIR"/*) return 0 ;; *) return 1 ;; esac
+}
+
 link_one() { # <skill path> <target dir>
   src="$1"; target_dir="$2"; name="$(basename "$src")"; dest="$target_dir/$name"
-  if [ -L "$dest" ]; then
-    # existing symlink — repoint it (idempotent, picks up repo moves)
+  if ours "$dest"; then
+    # our own symlink — repoint it (idempotent, picks up repo moves)
     run ln -sfn "$src" "$dest"; printf '   linked  %s\n' "$dest"
-  elif [ -e "$dest" ]; then
+  elif [ -e "$dest" ] || [ -L "$dest" ]; then
+    # a real dir, or a foreign symlink pointing at someone else's skill —
+    # never hijack it silently. Replace only on explicit --force.
+    what="real dir"; [ -L "$dest" ] && what="foreign symlink"
     if [ "$FORCE" -eq 1 ]; then
       run rm -rf "$dest"; run ln -sfn "$src" "$dest"
-      printf '   replaced %s (was a real dir)\n' "$dest"
+      printf '   replaced %s (was a %s)\n' "$dest" "$what"
     else
-      printf '   SKIP    %s exists and is not a symlink (use --force)\n' "$dest"
+      printf '   SKIP    %s — a %s already owns this name (use --force)\n' "$dest" "$what"
     fi
   else
     run ln -sfn "$src" "$dest"; printf '   linked  %s\n' "$dest"

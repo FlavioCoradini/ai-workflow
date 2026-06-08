@@ -45,9 +45,10 @@ new skills.
 ./uninstall.sh             # remove only the symlinks that point back into this repo
 ```
 
-> If you already have a hand-made skill of the same name in a harness dir (e.g. an existing
-> `~/.agents/skills/grill-me` folder), `install.sh` will **skip** it and tell you. Run once with
-> `--force` to convert it into a repo-backed symlink.
+> **It never silently overwrites a skill it doesn't own.** If a name is already taken by a real
+> folder *or* by a symlink pointing at someone else's skill (e.g. one installed by `npx skills`),
+> `install.sh` **skips** it and tells you. Only symlinks that already point into this repo are
+> repointed (so re-runs stay idempotent). Pass `--force` to deliberately replace a conflicting one.
 
 No dependencies — POSIX shell and `ln`, already on every Mac and Linux box.
 

@@ -22,3 +22,8 @@ All notable changes to this project are documented here. The format is based on
   (the bare CLI installs into agent dirs, bypassing the repo). Supports `--list`, `--skill`,
   `--force`, and `--install`. The repo's `skills/<name>/SKILL.md` layout also makes it a valid
   `npx skills add <user>/<repo>` source out of the box.
+
+### Changed
+- `install.sh` no longer hijacks a skill name it doesn't own. A name held by a real folder *or* by
+  a foreign symlink (e.g. one created by `npx skills`) is skipped unless `--force`; only symlinks
+  already pointing into this repo are repointed. Covered by `test/test_install.sh`.

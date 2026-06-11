@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
+  "permission": {
+    "bash": {
+      "rm *": "ask",
+      "git push *": "ask",
+      "git commit *": "ask",
+      // AI agents may not merge PRs. The native deny covers `gh pr merge`;
+      // the merge-guard plugin (plugins/merge-guard.js) covers the API and
+      // GraphQL vectors that pattern rules can't express.
+      "gh pr merge *": "deny",
+    },
+  },
+}

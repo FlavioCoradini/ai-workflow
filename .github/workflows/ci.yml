@@ -15,11 +15,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: shellcheck
-        run: shellcheck install.sh uninstall.sh test/run.sh
+        run: shellcheck install.sh uninstall.sh install-configs.sh setup.sh test/run.sh test/test_install.sh test/scan-secrets.sh scripts/add-skill.sh
 
       - name: shell syntax (-n)
         run: |
-          for f in install.sh uninstall.sh test/run.sh; do
+          for f in install.sh uninstall.sh install-configs.sh setup.sh test/run.sh test/test_install.sh test/scan-secrets.sh; do
             sh -n "$f"
           done
 
@@ -29,5 +29,11 @@ jobs:
       - name: install collision handling
         run: ./test/test_install.sh
 
-      - name: install dry-run (smoke test)
-        run: ./install.sh --all --dry-run
+      - name: scan harness configs for secrets
+        run: ./test/scan-secrets.sh
+
+      - name: validate harness configs (node)
+        run: node --check harnesses/opencode/plugins/merge-guard.js && python3 -m json.tool harnesses/claude/settings.json > /dev/null
+
+      - name: install dry-runs (smoke test)
+        run: ./install.sh --all --dry-run && ./install-configs.sh --dry-run

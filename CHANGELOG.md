@@ -7,6 +7,11 @@ All notable changes to this project are documented here. The format is based on
 ## [Unreleased]
 
 ### Added
+- Harness configs as source of truth: `harnesses/<name>/` holds each tool's whole config file,
+  symlinked into place by `install-configs.sh` (backs up any existing real file first). Ships Claude
+  (`settings.json`) and opencode (`opencode.jsonc` + `plugins/merge-guard.js`), both encoding the
+  no-co-author and no-PR-merge policies. `setup.sh` runs skills + configs together;
+  `test/scan-secrets.sh` gates the public repo against committed secrets (wired into CI).
 - Initial repository: a source-of-truth collection of Agent Skills with a zero-dependency installer.
 - `install.sh` — symlinks every skill under `skills/` into the shared store `~/.agents/skills/`
   (read by Codex, opencode, Gemini CLI, and the wider agent-compatible ecosystem) plus a short list

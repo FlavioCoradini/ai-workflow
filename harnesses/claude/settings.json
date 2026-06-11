@@ -1,0 +1,28 @@
+{
+  "model": "claude-fable-5[1m]",
+  "effortLevel": "high",
+  "agentPushNotifEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "deny": [
+      "Bash(gh pr merge)",
+      "Bash(gh pr merge *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command // \"\"'); printf '%s' \"$cmd\" | grep -qiE 'gh[[:space:]]+pr[[:space:]]+merge|/pulls/[0-9]+/merge|mergePullRequest' && printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"AI agents are not allowed to merge PRs (PreToolUse guard).\"}}' || true"
+          }
+        ]
+      }
+    ]
+  }
+}

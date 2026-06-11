@@ -1,6 +1,7 @@
 # ai-workflow
 
-My AI [Agent Skills](https://agentskills.io) in one place, symlinked into every harness with one command.
+Source of truth for my AI workflow: [Agent Skills](https://agentskills.io) and per-harness configs,
+symlinked into every tool with one command.
 
 Skills live here once. Most tools — Codex, opencode, Gemini CLI, and the wider agent-compatible
 ecosystem — read the shared store `~/.agents/skills/`, so `install.sh` symlinks each skill there.
@@ -84,6 +85,31 @@ This repo is itself a valid `npx skills` source: `npx skills add FlavioCoradini/
 
 If you use a tool that reads only its own directory and isn't listed, add a line to the `EXCEPTIONS`
 table at the top of `install.sh` / the `SWEEP_DIRS` list in `uninstall.sh`.
+
+## Harness configs
+
+`harnesses/<name>/` holds each tool's **whole config file** as the source of truth; `install-configs.sh`
+symlinks it into place so edits here are live everywhere. An existing real file is **backed up**
+(`.bak.<stamp>`) before it's replaced — never destroyed.
+
+```sh
+./install-configs.sh --dry-run   # preview
+./install-configs.sh             # symlink configs into installed harnesses (back up originals)
+./setup.sh                       # everything: skills + configs in one go
+```
+
+| Harness | Config (repo → target) |
+|---------|------------------------|
+| Claude Code | `harnesses/claude/settings.json` → `~/.claude/settings.json` |
+| opencode | `harnesses/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` (+ `plugins/merge-guard.js`) |
+
+Both currently encode the same policy: no AI co-author trailer on commits/PRs, and **AI agents may
+not merge PRs** (a deny rule plus a guard that blocks every merge vector). Codex and Pi get added when
+they're installed.
+
+These are **my personal** configs (model choice, the guard) — fork or adapt them; they're not meant to
+be installed verbatim by anyone but me. They contain no secrets (auth lives in separate files), and
+`test/scan-secrets.sh` runs in CI to keep it that way. The Claude merge-guard needs `jq` at runtime.
 
 ## License & credits
 

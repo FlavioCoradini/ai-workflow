@@ -37,7 +37,13 @@ In priority order. When two conflict (e.g. DRY vs. KISS), prefer the simpler, mo
 - **Naming**: descriptive, intention-revealing. No abbreviations unless universally understood.
 - **Functions**: small, focused, single-purpose. Aim for <20 lines and ≤3–4 parameters.
 - **Error handling**: fail fast, fail loudly. Use typed errors. Never swallow exceptions silently.
-- **Comments**: code should be self-documenting. Comment *why*, not *what*.
+- **Comments**: default to none — let naming and structure carry the meaning. Never narrate *what*
+  the code does (`// loop over users`, `// increment counter`, `// call the API`); if a comment
+  restates the code, delete it. Comment only what code can't express: *why* a non-obvious decision
+  was made, a workaround and the reason for it (link the issue), or a warning about a non-obvious
+  constraint or invariant. Leave no change-narration (`// added validation`, `// updated to…`) or
+  `TODO`/placeholder comments in delivered code. Keep required API/doc comments where the project
+  uses them.
 - **Constants**: no magic numbers or strings — name them.
 - **Nesting**: keep it shallow (≤3 levels); prefer early returns and guard clauses.
 - **Security**: validate and sanitize inputs at boundaries; parameterize queries; never log secrets

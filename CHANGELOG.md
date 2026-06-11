@@ -16,6 +16,9 @@ All notable changes to this project are documented here. The format is based on
 - `test/run.sh` — validates every `SKILL.md` against the Agent Skills open standard (frontmatter,
   `name` == folder, naming rules, length limits). Wired into CI.
 - The `grill-me` skill (derived from Matt Pocock's, MIT) as the first entry.
+- `tech-lead` skill — directs the agent to write and review code as a senior tech lead
+  (clarity-first, DRY/SOLID/KISS/YAGNI), with a "fit the codebase first" rule, explicit
+  conflict tie-breaking, and concrete security/testing guidance.
 - Imported 20 more skills as a starting set: the 18-skill design/frontend suite from
   `pbakaus/impeccable`, plus `find-skills` (vercel-labs/skills) and `next-best-practices`
   (vercel-labs/next-skills). Sources credited in the README.

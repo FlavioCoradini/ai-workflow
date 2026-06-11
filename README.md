@@ -35,6 +35,7 @@ skipped (use `--force`); only its own symlinks are repointed.
 | Skill | What it does |
 |-------|--------------|
 | [`grill-me`](skills/grill-me/) | Interviews you about a plan one question at a time until every decision is resolved. |
+| [`tech-lead`](skills/tech-lead/) | Writes and reviews code like a senior tech lead — clarity-first, DRY/SOLID/KISS/YAGNI, with trade-offs and edge cases surfaced. |
 | [`find-skills`](skills/find-skills/) | Finds and installs agent skills on request. |
 | [`next-best-practices`](skills/next-best-practices/) | Next.js best practices — RSC, data patterns, metadata, routing, optimization. |
 

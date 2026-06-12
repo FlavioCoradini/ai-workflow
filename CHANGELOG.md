@@ -7,7 +7,9 @@ All notable changes to this project are documented here. The format is based on
 ## [Unreleased]
 
 ### Added
-- Harness configs as source of truth: `harnesses/<name>/` holds each tool's whole config file,
+- Claude Code standards-conformance workflow agents (`code-conformance` and `conformance-reviewer`),
+  installed by `install-configs.sh` into `~/.claude/agents/` for reuse across projects.
+- Harness configs as source of truth: `harnesses/<name>/` holds each tool's config files,
   symlinked into place by `install-configs.sh` (backs up any existing real file first). Ships Claude
   (`settings.json`) and opencode (`opencode.jsonc` + `plugins/merge-guard.js`), both encoding the
   no-co-author and no-PR-merge policies. `setup.sh` runs skills + configs together;
@@ -33,6 +35,8 @@ All notable changes to this project are documented here. The format is based on
   `npx skills add <user>/<repo>` source out of the box.
 
 ### Changed
+- `install-configs.sh` supports `--only claude-agents` to install Claude workflow agents without
+  relinking unrelated harness configs.
 - `install.sh` no longer hijacks a skill name it doesn't own. A name held by a real folder *or* by
   a foreign symlink (e.g. one created by `npx skills`) is skipped unless `--force`; only symlinks
   already pointing into this repo are repointed. Covered by `test/test_install.sh`.

@@ -88,24 +88,26 @@ table at the top of `install.sh` / the `SWEEP_DIRS` list in `uninstall.sh`.
 
 ## Harness configs
 
-`harnesses/<name>/` holds each tool's **whole config file** as the source of truth; `install-configs.sh`
-symlinks it into place so edits here are live everywhere. An existing real file is **backed up**
+`harnesses/<name>/` holds each tool's config files as the source of truth; `install-configs.sh`
+symlinks them into place so edits here are live everywhere. An existing real file is **backed up**
 (`.bak.<stamp>`) before it's replaced — never destroyed.
 
 ```sh
 ./install-configs.sh --dry-run   # preview
+./install-configs.sh --only claude-agents   # just Claude workflow agents
 ./install-configs.sh             # symlink configs into installed harnesses (back up originals)
 ./setup.sh                       # everything: skills + configs in one go
 ```
 
 | Harness | Config (repo → target) |
 |---------|------------------------|
-| Claude Code | `harnesses/claude/settings.json` → `~/.claude/settings.json` |
+| Claude Code | `harnesses/claude/settings.json` → `~/.claude/settings.json`; `harnesses/claude/agents/*.md` → `~/.claude/agents/*.md` |
 | opencode | `harnesses/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` (+ `plugins/merge-guard.js`) |
 
-Both currently encode the same policy: no AI co-author trailer on commits/PRs, and **AI agents may
-not merge PRs** (a deny rule plus a guard that blocks every merge vector). Codex and Pi get added when
-they're installed.
+The harness configs encode the same policy: no AI co-author trailer on commits/PRs, and **AI agents may
+not merge PRs** (a deny rule plus a guard that blocks every merge vector). Claude Code also gets
+standards-conformance workflow agents for implementation and independent review. Codex and Pi get added
+when they're installed.
 
 These are **my personal** configs (model choice, the guard) — fork or adapt them; they're not meant to
 be installed verbatim by anyone but me. They contain no secrets (auth lives in separate files), and
